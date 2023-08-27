@@ -1,10 +1,13 @@
 import { useState, useRef } from 'react';
-
+import { useContext } from 'react';
 import classes from './AuthForm.module.css';
+import AuthContext from '../../store/auth-context';
 
 const AuthForm = () => {
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
+
+  const authCtx = useContext(AuthContext);
 
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -22,9 +25,9 @@ const AuthForm = () => {
     setIsLoading(true);
     let url;
     if (isLogin) {
-      url = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBolyzhM_ri3M44pTTaXrVD0L7HRaqE7_I';
+      url = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBklxRGrsijYnB5NWdIP0wvEdLYfsHEsB8';
     } else {
-      url = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBolyzhM_ri3M44pTTaXrVD0L7HRaqE7_I';
+      url = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBklxRGrsijYnB5NWdIP0wvEdLYfsHEsB8';
     }
 
     fetch(url, {
@@ -38,7 +41,8 @@ const AuthForm = () => {
         'Content-Type': 'application/json'
       }
     }
-    ).then(res => {
+    )
+    .then(res => {
       setIsLoading(false);
       if (res.ok) {
         return res.json();
@@ -53,7 +57,7 @@ const AuthForm = () => {
       }
     })
     .then(data => {
-      console.log(data);
+      authCtx.login(data.idToken);
     })
     .catch(err => {
       alert(err.message);
